@@ -2,5 +2,5 @@ from django.urls import path
 from base.views import *
 
 urlpatterns = [
-    path('teste/', TesteView.as_view(), name='teste')
+    path('/', MainView.as_view(), name='visao_geral_dados')
 ]

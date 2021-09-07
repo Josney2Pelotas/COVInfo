@@ -1,0 +1,111 @@
+{% load static %}
+
+{% block head %}
+<link rel="icon" href="{% static 'base/design/icons/logo.svg' %}">
+{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'base/css/external/bootstrap.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'base/css/external/apexcharts.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'base/css/external/materialize.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'base/css/menu.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="row">
+        <div class="col-8 mt-4 mb-4 ml-3">
+            <img class="user" src="{% static 'base/design/icons/logoescrito.png' %}" style="width: 380px; height: 90px;"/>
+        </div>
+    </div>
+    <div class="row fill" id="grafrow">
+        <div class="col mb-5">
+            <div class="row mt-4" style="margin-left: 100px;">
+                <span class="left_row"><strong>Painel Coronavírus</strong></span>
+            </div>
+            <div class="row mt-2" style="margin-left: 100px;">
+                <span class="left_row" style="color:#326CC4;"><strong>Atualizado em: {{ ultima_atualizacao }}</strong></span>
+            </div>
+            <div class="row mt-5 justify-content-center">
+                <div class="col-lg-auto">
+                    <span class="fw-bold mb-0">Região</span>
+                    <select>
+                        {% for regiao in form.regiao %}
+                            <option value="{{regiao.0}}">{{regiao.1}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-auto">
+                    <span class="fw-bold mb-0">Estado</span>
+                    <select>
+                        {% for estado in form.estado %}
+                            <option value="{{estado.0}}">{{estado.1}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-auto">
+                    <span class="fw-bold mb-0">Município</span>
+                    <select>
+                        {% for municipio in form.municipio %}
+                            <option value="{{municipio.0}}">{{municipio.1}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row justify-content-center mt-5">
+                <div class="col-10">
+                    <div class="card">
+                        <div class="card-body">
+                            <img class="card_grafico" src="{% static 'base/design/icons/iconehospital.svg' %}"><span><strong>Visão Geral</strong></span>
+                            <div id="graf_geral"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'base/js/external/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'base/js/external/bootstrap.min.js' %}"></script>
+<script src="{% static 'base/js/external/apexcharts.min.js' %}"></script>
+<script src="{% static 'base/js/external/materialize.min.js' %}"></script>
+<script>
+  $(document).ready(function(){
+    $('select').formSelect();
+  });
+
+  var options = {
+        series: [{
+            name: "Desktops",
+            data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+        }],
+        chart: {
+            height: 350,
+            type: 'line',
+            zoom: {
+            enabled: false
+            }
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            curve: 'straight'
+        },
+        grid: {
+            row: {
+            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            opacity: 0.5
+            },
+        },
+        xaxis: {
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+        }
+    };
+    var chart = new ApexCharts(document.querySelector("#graf_geral"), options);
+    chart.render();
+</script>
+{% endblock %}

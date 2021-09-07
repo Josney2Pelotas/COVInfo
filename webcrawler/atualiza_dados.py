@@ -5314,14 +5314,10 @@ def download_planilha():
     request_endpoint = requests.get(url)
     endpoint_json = json.loads(request_endpoint.text)
     request_planilha = requests.get(endpoint_json['planilha']['arquivo']['url'])
-    if request_planilha.status_code != 200:
-        return '-----------------------------Falha no Download-----------------------------'
-    else:
-        path_xlsx = os.path.dirname(os.path.realpath(__file__)) + '\\info_diaria.xlsx'
-        output = open(path_xlsx, 'wb')
-        output.write(request_planilha.content)
-        output.close()
-        return '-----------------------------Planilha Gerada-----------------------------'
+    path_xlsx = os.path.dirname(os.path.realpath(__file__)) + '\\info_diaria.xlsx'
+    output = open(path_xlsx, 'wb')
+    output.write(request_planilha.content)
+    output.close()
 
 
 def atualiza_dados():
@@ -5331,17 +5327,19 @@ def atualiza_dados():
     dados_planilhas.dropna(subset = ["municipio"], inplace=True)
     dados_planilhas['Recuperadosnovos'] = dados_planilhas['Recuperadosnovos'].fillna(0)
     dados_planilhas['emAcompanhamentoNovos'] = dados_planilhas['emAcompanhamentoNovos'].fillna(0)
+    total_linhas = len(dados_planilhas.index)
+    contador = 1
 
     with connection.cursor() as cursor:
         for linha in dados_planilhas.iterrows():
-            dados_municipio = dict_municipios.get(linha['municipio'])
+            dados_municipio = dict_municipios.get(linha[1]['municipio'])
 
             query_dia_anterior = 'SELECT casos, obitos FROM base_casos WHERE data = %s AND municipio_id = %s'
             cursor.execute(query_dia_anterior, [dia_anterior, dados_municipio[2]])
             dados_dia_anterior = cursor.fetchall()
 
-            casosNovos = dados_dia_anterior['casos'] - linha[1]['casosAcumulado']
-            obitosNovos = dados_dia_anterior['obitos'] - linha[1]['obitosAcumulado']
+            casosNovos = dados_dia_anterior[0]['casos'] - linha[1]['casosAcumulado']
+            obitosNovos = dados_dia_anterior[0]['obitos'] - linha[1]['obitosAcumulado']
 
             query_insert =  '''
                             INSERT INTO base_casos(casos, casos_novos, obitos, obitos_novos, recuperados, acompanhamento, semana, data, regiao_id, estado_id, municipio_id) VALUES
@@ -5361,11 +5359,17 @@ def atualiza_dados():
                 dados_municipio[2]
             ])
             connection.commit()
-            cursor.close()
-    return "-----------------------------Dados Atualizados com Sucesso-----------------------------"
+
+            print('Linha ' + str(contador) + ' de ' + str(total_linhas) + ' Inserida')
+            contador += 1
+        cursor.close()
+    return 0
 
 
 print('-----------------------------Iniciando Coleta da Planilha Diária-----------------------------')
 download_planilha()
-print('-----------------------------Iniciando Insert dos Dados Novos-----------------------------')
+print('---------------------------------------Planilha Gerada---------------------------------------')
+
+print('-------------------------------Iniciando Insert dos Dados Novos------------------------------')
 atualiza_dados()
+print('---------------------------------Dados Atualizados com Sucesso-------------------------------')

@@ -1,0 +1,22 @@
+<div class="col-lg-auto">
+    <span class="fw-bold mb-0">Estado</span>
+    <select id="filtro_estado" class="filtro_regiao">
+        {% for estado in form.estado %}
+            <option value="{{estado.0}}">{{estado.1}}</option>
+        {% endfor %}
+    </select>
+</div>
+<div id="div_estado" class="col-lg-auto row">
+    <div class="col-lg-auto">
+        <span class="fw-bold mb-0">Município</span>
+        <select id="filtro_municipio" class="filtro_regiao">
+            {% for municipio in form.municipio %}
+                <option value="{{municipio.0}}">{{municipio.1}}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<script>
+    $('.filtro_regiao').formSelect();
+</script>

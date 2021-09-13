@@ -31,3 +31,18 @@ html, body {
 .dropdown-content li>a, .dropdown-content li>span {
     color: #326CC4;
 }
+
+.loader{
+    margin: 0 0 2em;
+    height: 100px;
+    width: 20%;
+    text-align: center;
+    padding: 1em;
+    margin: 0 auto 1em;
+    display: inline-block;
+    vertical-align: top;
+}
+
+svg.rect_loader rect.rect_loader{ 
+    fill: #326CC4;
+}

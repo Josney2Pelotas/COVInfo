@@ -29,27 +29,63 @@
             <div class="row mt-5 justify-content-center">
                 <div class="col-lg-auto">
                     <span class="fw-bold mb-0">Região</span>
-                    <select>
+                    <select id="filtro_regiao">
                         {% for regiao in form.regiao %}
                             <option value="{{regiao.0}}">{{regiao.1}}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-lg-auto">
-                    <span class="fw-bold mb-0">Estado</span>
-                    <select>
-                        {% for estado in form.estado %}
-                            <option value="{{estado.0}}">{{estado.1}}</option>
-                        {% endfor %}
-                    </select>
+                <div id="div_regiao" class="col-lg-auto row">
+                    <div class="col-lg-auto">
+                        <span class="fw-bold mb-0">Estado</span>
+                        <select id="filtro_estado">
+                            {% for estado in form.estado %}
+                                <option value="{{estado.0}}">{{estado.1}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div id="div_estado" class="col-lg-auto row">
+                        <div class="col-lg-auto">
+                            <span class="fw-bold mb-0">Município</span>
+                            <select id="filtro_municipio">
+                                {% for municipio in form.municipio %}
+                                    <option value="{{municipio.0}}">{{municipio.1}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-lg-auto">
-                    <span class="fw-bold mb-0">Município</span>
-                    <select>
-                        {% for municipio in form.municipio %}
-                            <option value="{{municipio.0}}">{{municipio.1}}</option>
-                        {% endfor %}
-                    </select>
+                <div id="loader_filtros" class="col-lg-auto d-none">
+                    <div class="loader loader--style8" title="7">
+                        <svg class="rect_loader" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="30px" viewBox="0 0 24 30"
+                            style="enable-background:new 0 0 50 50;" xml:space="preserve">
+                            <rect class="rect_loader" x="0" y="10" width="4" height="10" fill="#333" opacity="0.2">
+                                <animate attributeName="opacity" attributeType="XML" values="0.2; 1; .2" begin="0s" dur="0.6s"
+                                    repeatCount="indefinite" />
+                                <animate attributeName="height" attributeType="XML" values="10; 20; 10" begin="0s" dur="0.6s"
+                                    repeatCount="indefinite" />
+                                <animate attributeName="y" attributeType="XML" values="10; 5; 10" begin="0s" dur="0.6s"
+                                    repeatCount="indefinite" />
+                            </rect>
+                            <rect class="rect_loader" x="8" y="10" width="4" height="10" fill="#333" opacity="0.2">
+                                <animate attributeName="opacity" attributeType="XML" values="0.2; 1; .2" begin="0.15s" dur="0.6s"
+                                    repeatCount="indefinite" />
+                                <animate attributeName="height" attributeType="XML" values="10; 20; 10" begin="0.15s" dur="0.6s"
+                                    repeatCount="indefinite" />
+                                <animate attributeName="y" attributeType="XML" values="10; 5; 10" begin="0.15s" dur="0.6s"
+                                    repeatCount="indefinite" />
+                            </rect>
+                            <rect class="rect_loader" x="16" y="10" width="4" height="10" fill="#333" opacity="0.2">
+                                <animate attributeName="opacity" attributeType="XML" values="0.2; 1; .2" begin="0.3s" dur="0.6s"
+                                    repeatCount="indefinite" />
+                                <animate attributeName="height" attributeType="XML" values="10; 20; 10" begin="0.3s" dur="0.6s"
+                                    repeatCount="indefinite" />
+                                <animate attributeName="y" attributeType="XML" values="10; 5; 10" begin="0.3s" dur="0.6s"
+                                    repeatCount="indefinite" />
+                            </rect>
+                        </svg>
+                    </div>
                 </div>
             </div>
             <div class="row justify-content-center mt-5">
@@ -73,18 +109,18 @@
 <script src="{% static 'base/js/external/apexcharts.min.js' %}"></script>
 <script src="{% static 'base/js/external/materialize.min.js' %}"></script>
 <script>
-  $(document).ready(function(){
-    $('select').formSelect();
-  });
+    $(document).ready(function(){
+        $('select').formSelect();
+    });
 
-  var options = {
+    var options = {
         series: [{
-            name: "Desktops",
-            data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+            name: "Casos",
+            data: ['{{casos.0.casos}}', '{{casos.1.casos}}', '{{casos.2.casos}}', '{{casos.3.casos}}', '{{casos.4.casos}}', '{{casos.5.casos}}', '{{casos.6.casos}}', '{{casos.7.casos}}', '{{casos.8.casos}}']
         }],
         chart: {
             height: 350,
-            type: 'line',
+            type: 'bar',
             zoom: {
             enabled: false
             }
@@ -97,15 +133,58 @@
         },
         grid: {
             row: {
-            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            colors: ['#f3f3f3', 'transparent'],
             opacity: 0.5
             },
         },
         xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            categories: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro'],
         }
     };
     var chart = new ApexCharts(document.querySelector("#graf_geral"), options);
     chart.render();
+
+    function getCookie(name) {
+    let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    $('#filtro_regiao').change( () => {
+        $.ajax({
+            type: "POST",
+            url: 'filtros/',
+            data: {
+                csrfmiddlewaretoken: getCookie('csrftoken'),
+                regiao: $('#filtro_regiao').val(),
+                tipo: 'regiao'
+            }
+        });
+    })
+
+    $(document).on('change', '#filtro_estado', () => {
+        $.ajax({
+            type: "POST",
+            url: 'filtros/',
+            data: {
+                csrfmiddlewaretoken: getCookie('csrftoken'),
+                regiao: $('#filtro_regiao').val(),
+                estado: $('#filtro_estado').val(),
+                tipo: 'estado'
+            },
+            success: (response) => {
+                $('#div_estado').html(response)
+            }
+        });
+    })
 </script>
 {% endblock %}
